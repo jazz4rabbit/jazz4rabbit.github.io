@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Github블로그와 Latex 적용"
-date:   2017-03-03 10:26:00 +0900
+date:   2017-03-03 22:26:00 +0900
 categories: jekyll update
 ---
 # Github에 Blog 만들기, Latex 적용하기
