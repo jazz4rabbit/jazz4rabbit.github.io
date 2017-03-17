@@ -7,8 +7,6 @@ categories: tensorflow
 Tensorflow 를 설치한 운영체제는 windows 10에 설치하였다.
 
 # 요약
-급한 사람들을 위해!!
-
 [anaocnda](https://www.continuum.io/downloads) 설치
 
 anaconda prompt 열기 (아래의 명령어 실행)

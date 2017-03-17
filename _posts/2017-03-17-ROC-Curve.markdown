@@ -1,0 +1,191 @@
+---
+layout: post
+title:  "ROC Curve 예제"
+date:   2017-03-18 04:44:00 +0900
+categories: ROC_curve
+---
+
+{% highlight python %}
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+{% endhighlight %}
+
+# ROC Curve 예제
+당신이 농구선수 스카우터라고 해보자. (좋은 농구선수를 선별하는 직업일 것이다)<br />
+당신은 데이터를 활용하여 특정 진단 방법으로 선수를 **좋은 선수/ 안좋은 선수** 로 분류한다고 해보자.<br />
+우리는 그 데이터로 키와 몸무게로 분류하는 예제를 한번 보도록 하겠다.<br />
+어떤 특성으로 데이터를 분류 하는 것이 좋을까 해서 나온 것이 ROC Curve라고 생각하면 되겠다.
+
+몇가지 가정을 하겠다. (샘플자료를 얻기 위함이다.)
+- 키만 이용한 분류
+> G : 좋은 농구선수의 키, B : 안좋은 농구선수의 키 라고 하자.<br />
+$$ G \sim \mathcal{N}(185, 3^{2}), \, B \sim \mathcal{N}(165,3^{2}).$$
+
+- 몸무게만 이용한 분류
+> G : 좋은 농구선수의 몸무게, B : 안좋은 농구선수의 몸무게 라고 하자.<br />
+$$ G \sim \mathcal{N}(80, 5^{2}), \, B \sim \mathcal{N}(70,5^{2}). $$
+
+우리는 위에서 저러한 가정을 했지만 우리는 저러한 분포를 따르는지 조차 모른다고 생각하고 선수를 뽑아야한다는 것이다. 위에서 가정을 한 이유는 단지 데이터를 얻을 때 저 분포를 사용하려고 하는 것이다. 만일 우리가 위의 분포를 알고 있다면 몸무게보다 키로 좋은 선수를 구별하기 용이하다는 것을 알 수 있다. (표준편차가 작고, 평균이 멀리 떨어져있기때문이다.) 다시 한번 강조하지만 우리는 저 분포를 모르는 것이다.
+
+아래의 코드는 농구선수 200명의 데이터를 만든 것이다. 히스토그램에서 파란색 사각형으로 좋은 선수 100명, 초록색 사각형으로 안좋은 선수 100명의 데이터이다.
+
+
+{% highlight python %}
+class basketball:
+    def __init__(self, mu_X, sigma_X, mu_Y, sigma_Y, num_x, num_y):
+        self.mu_X = mu_X
+        self.mu_Y = mu_Y
+        self.sigma_X = sigma_X
+        self.sigma_Y = sigma_Y
+        self.num_x = num_x
+        self.num_y = num_y
+
+        self.X = np.random.normal(mu_X, sigma_X, num_x)
+        self.Y = np.random.normal(mu_Y, sigma_Y, num_y)
+
+    def histogram(self):
+        countX, binsX, ignoredX = plt.hist(self.X, self.num_x // 2, normed=True)
+        countY, binsY, ignoredY = plt.hist(self.Y, self.num_y // 2, normed=True)
+        plt.plot(binsX, 1/(self.sigma_X * np.sqrt(2*np.pi))*np.exp(-(binsX - self.mu_X)**2 / (2*self.sigma_X**2)), linewidth=2, color='y')
+        plt.plot(binsY, 1/(self.sigma_Y * np.sqrt(2*np.pi))*np.exp(-(binsY - self.mu_Y)**2 / (2*self.sigma_Y**2)), linewidth=2, color='k')
+        return
+
+    def 민감도(self, border):
+        return (self.X > border).sum() / len(self.X)
+
+    def 특이도(self,border):
+        return (self.Y < border).sum() / len(self.Y)
+
+    def ROC(self, option):
+        xx = []; yy = []
+        minn = min(self.X.min(), self.Y.min())
+        maxx = max(self.X.max(), self.Y.max())
+
+        for i in range(int(minn)-1, int(maxx)+1):
+            xx.append(1 - self.특이도(i))
+            yy.append(self.민감도(i))
+
+        plt.plot(xx,yy,option)
+
+    def show():
+        plt.show()
+
+    # 사다리꼴 넓이 계산;;
+    def AUC(self):
+        minn = min(self.X.min(), self.Y.min())
+        maxx = max(self.X.max(), self.Y.max())
+
+        old_x = self.특이도(int(minn)-1)
+        old_y = self.민감도(int(minn)-1)
+
+        auc = 0
+        for i in range(int(minn),int(maxx)+1):
+            new_x = self.특이도(i)
+            new_y = self.민감도(i)
+            auc += abs(new_x - old_x) * (new_y + old_y) / 2
+            old_x = new_x
+            old_y = new_y
+
+        return auc
+{% endhighlight %}
+
+
+```python
+muG = 185; sigmaG = 3**2
+muB = 165; sigmaB = 3**2
+
+# 100명, 100명을 뽑는다.
+height = basketball(muG, sigmaG, muB, sigmaB, 100, 100)
+height.histogram()
+
+```
+
+
+![histogram]({{ site.url }}/Resources/IMG/ROC/output_3_0.png)
+
+
+우리 눈에는 표준정규분포는 없다고 생각하면 된다. 보기 편하기 위해서 그려준 것이고, 우리는 좋은 선수를 뽑기위한 기준점을 선별해야한다.<br />
+겹친부분의 파란색은 보이지 않는 것도 있다;; 180보다 큰 선수들은 대부분 좋은 농구선수인 것을 볼 수 있다.
+하지만 눈대중으로 선수를 뽑을 수는 없는 노릇이다.<br />
+
+그 전에 민감도와 특이도에 대해 알아보자.<br />
+민감도란 우리의 구별방법이 진짜 좋은 선수중에 얼마나 좋은 선수를 골라냈는가, 특이도란 우리의 구별방법이 나쁜 선수중에 얼마나 나쁜 선수를 골라냈는가이다.
+키만으로 좋은 선수, 나쁜 선수를 구별할 수 있다고 가정해보자. '100cm보다 크면 좋은 선수'이라는 기준으로 선별한다면 모든 선수가 좋은 선수로 된다. 이 경우 민감도 100%이고 특이도가 0%인 상황이며, 좋은 선수를 모두 다 뽑을 수 있지만 문제는 안좋은 선수도 모두 다 뽑아야 한다는 것이다. 또는 '3m 이상이면 좋은 농구 선수' 이렇게 하면 모든 선수가 안좋은 선수가 되서 안좋은 선수를 100% 골라낼 수 있기때문에 특이도는 100%가 되지만 좋은 선수는 하나도 골라내지 못하기 때문에 특이도가 0%가 된다.
+
+위에서 본것처럼 민감도와 특이도가 모두 높은 기준점을 찾아야한다. 그래서 키를 어느정도로 해야 민감도/특이도가 모두 높은 수치를 나타나게 될까? 민감도를 높이면 특이도가 줄어들고, 특이도를 높이면 민감도가 줄어드는 반비례관계에서 말이다. 따라서 키에 대한 기준을 변경시켜가면서 나오는 값들을 그래프에 찍어보자.
+다만 x축은 1-특이도, y축은 민감도로 설정한다. x축을 1-특이도로 한 이유는 우리가 보아오던 그래프처럼 보이게 하기 위함이다.
+
+
+```python
+height.ROC("bo-")
+basketball.show()
+```
+
+
+![png]({{ site.url }}/Resources/IMG/ROC/output_5_0.png)
+
+
+# 두 번째로 몸무게에 대해서도 해보자
+
+
+```python
+muG = 80; sigmaG = 5**2
+muB = 70; sigmaB = 5**2
+
+weight = basketball(muG, sigmaG, muB, sigmaB, 100, 100)
+weight.histogram()
+basketball.show()
+```
+
+
+![png]({{ site.url }}/Resources/IMG/ROC/output_7_0.png)
+
+
+
+```python
+weight.ROC("ro-")
+```
+
+
+![png]({{ site.url }}/Resources/IMG/ROC/output_8_0.png)
+
+
+# 히스토그램 비교
+당신이라면 히스토그램 데이터로만 보았을때 키와 몸무게 중에서 한 가지만 사용하여 좋은 선수를 구별하겠다라고 한다면 어느것을 선택하겠는가?
+아마도 사람들은 키라고 이야기를 할 것이다. 하지만 이것은 ROC 커브로 보았을때도 같은 결론을 낼 수 있다. 다음 제목으로 가보자
+
+
+```python
+height.histogram()
+weight.histogram()
+
+```
+
+
+![png]({{ site.url }}/Resources/IMG/ROC/output_10_0.png)
+
+
+# ROC 비교
+ROC 커브에서 x축이 1-특이도, y축이 민감도이다. 즉, y값은 높을 수록 좋고, x값은 낮을 수록 좋다. 그러한 그래프가 어느 것인가? 바로 키에대한 ROC 커브이다. 즉, 우리는 히스토그램을 보지않고, ROC 커브를 만들어서 한눈에 비교할 수 있는 것이다.<br />
+몸무게로 좋은 선수를 구별하는 것보다 키로 좋은 선수를 구별하는 것이 좋은 이유는 아래의 그래프로 한눈에 볼 수 있다. 하지만 몸무게보다 키가 좋다는 것을 사람이 꼭 그래프를 보아야하는 것인가??..
+
+
+```python
+height.ROC("bo-")
+weight.ROC("ro-")
+```
+
+
+![png]({{ site.url }}/Resources/IMG/Roc/output_12_0.png)
+
+
+# AUC
+어떤 특성이 좋은지 확인하기 위해 수치적으로 확인할 수 있는 방법으로 ROC 커브의 밑넓이를 계산하면 된다.(~~ROC 커브도 보기가 귀찮기 때문에~~)
+
+
+```python
+print(height.AUC(), weight.AUC())
+```
+
+    0.9279 0.5425
