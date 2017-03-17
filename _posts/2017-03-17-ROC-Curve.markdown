@@ -177,7 +177,7 @@ weight.ROC("ro-")
 ```
 
 
-![png]({{ site.url }}/Resources/IMG/Roc/output_12_0.png)
+![png]({{ site.url }}/Resources/IMG/ROC/output_12_0.png)
 
 
 # AUC
