@@ -3,7 +3,7 @@ layout: post
 title:  "ROC Curve 예제"
 date:   2017-03-18 04:44:00 +0900
 categories: ROC_curve
-comments: True
+comments: true
 ---
 
 {% highlight python %}

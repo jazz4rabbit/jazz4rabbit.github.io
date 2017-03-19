@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "ROC Curve 예제"
+title:  "ROC Curve 예제2"
 date:   2017-03-18 18:44:00 +0900
 categories: ROC_curve
 comments: true
