@@ -3,6 +3,7 @@ layout: post
 title:  "Anaconda에 Tensorflow 설치하기(windows 10)"
 date:   2017-03-04 17:00:00 +0900
 categories: tensorflow
+comments: true
 ---
 Tensorflow 를 설치한 운영체제는 windows 10에 설치하였다.
 
