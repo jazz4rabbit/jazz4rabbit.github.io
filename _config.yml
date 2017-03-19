@@ -25,6 +25,10 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
 
+
+disqus:
+  shortname: jazz4rabbit
+  
 # Build settings
 markdown: kramdown
 theme: minima
@@ -33,6 +37,3 @@ gems:
 exclude:
   - Gemfile
   - Gemfile.lock
-
-disqus:
-  shortname: jazz4rabbit
