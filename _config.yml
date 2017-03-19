@@ -33,3 +33,6 @@ gems:
 exclude:
   - Gemfile
   - Gemfile.lock
+
+disqus:
+  shortname: jazz4rabbit
