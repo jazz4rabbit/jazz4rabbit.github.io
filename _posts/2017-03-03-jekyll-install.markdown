@@ -3,6 +3,7 @@ layout: post
 title:  "Github블로그와 Latex 적용"
 date:   2017-03-03 22:26:00 +0900
 categories: jekyll update
+comments: true
 ---
 # Github에 Blog 만들기, Latex 적용하기
 학부때 수학과를 나왔는데 그때 Latex라는 것을 좀 사용한 적이 있었다. 배울때는(구글링..) 굉장히 이해하기 힘들었지만(아직도..) 그래도 내가 원하는 수식은 구글링하면 칠 수 있다. 수학과를 나와서 그런지 다른 문서(M사의 word나, 한글문서)의 수식은 눈에 거슬린다. Markdown에 Latex를 적용할 수 있다는 사이트를 찾아서 적용시켜보았다.
