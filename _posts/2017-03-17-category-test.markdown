@@ -6,6 +6,9 @@ categories: ROC_curve
 comments: true
 ---
 
+a
+{{ page.url | absolute_url }}
+b
 {% for category in site.categories %}
   <li><a name="{{ category | first }}">{{ category | first }}</a>
     <ul>
